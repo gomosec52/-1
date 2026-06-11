@@ -1,0 +1,8 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game Packs</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<video class="bg-video" src="/assets/anime-bg.mp4" autoplay muted loop playsinline onerror="this.remove()"></video><div class="bg-gif"></div><div class="shade"></div>
+<header><a class="secret" href="/secret">секретно</a><nav id="packs"></nav><div id="profile"></div></header>
+<main><section id="auth" class="panel auth"><h1>Предложка игр</h1><p>Входи через Discord или обычный ник/пароль.</p><a class="btn discord" href="/auth/discord">Войти через Discord</a><div class="grid2"><form id="loginForm"><h3>Вход</h3><input name="username" placeholder="ник"><input name="password" type="password" placeholder="пароль"><button>Войти</button></form><form id="regForm"><h3>Регистрация</h3><input name="username" placeholder="ник"><input name="password" type="password" placeholder="пароль"><button>Зарегистрироваться</button></form></div><p id="authMsg"></p></section>
+<section id="content" class="hidden"><h1 id="packTitle"></h1><div id="games"></div></section></main>
+<aside id="chat" class="chat hidden"><b>Чат</b><div id="chatMessages"></div><form id="chatForm"><input name="message" placeholder="Написать..."><button>➤</button></form></aside>
+<div id="screamer" class="screamer hidden"><img src="/assets/screamer.gif" onerror="this.style.display='none'"><div class="screamText">БУ!</div><audio id="screamAudio" src="/assets/scream.mp3"></audio></div>
+<script src="/socket.io/socket.io.js"></script><script src="/js/app.js"></script></body></html>
