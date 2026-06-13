@@ -54,6 +54,7 @@ export default function HomePage() {
   const [visibleGameplayVideos, setVisibleGameplayVideos] = useState({});
   const audioRef = useRef(null);
   const backgroundVideoRef = useRef(null);
+  const backgroundWatchdogRef = useRef({ lastTime: 0, stuckTicks: 0, lastRecovery: 0 });
 
   async function loadMe() {
     const data = await api('/api/me');
@@ -108,6 +109,33 @@ export default function HomePage() {
     const timer = setInterval(() => loadChat().catch((error) => setChatStatus(error.message)), 3000);
     return () => clearInterval(timer);
   }, [me]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const video = backgroundVideoRef.current;
+      if (!video || document.hidden) return;
+
+      const watchdog = backgroundWatchdogRef.current;
+      if (video.error || video.ended || (Number.isFinite(video.duration) && video.duration > 0 && video.currentTime >= video.duration - 0.25)) {
+        recoverBackgroundVideo('restart');
+        return;
+      }
+
+      if (video.paused && !video.seeking) {
+        video.play().catch(() => {});
+      }
+
+      const isStuck = !video.paused && !video.seeking && Math.abs(video.currentTime - watchdog.lastTime) < 0.05;
+      watchdog.stuckTicks = isStuck ? watchdog.stuckTicks + 1 : 0;
+      watchdog.lastTime = video.currentTime;
+
+      if (watchdog.stuckTicks >= 2) {
+        recoverBackgroundVideo('stuck');
+      }
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [backgroundVideoUrl]);
 
   async function submitLogin(event) {
     event.preventDefault();
@@ -277,6 +305,29 @@ export default function HomePage() {
     }));
   }
 
+  function recoverBackgroundVideo(reason) {
+    const video = backgroundVideoRef.current;
+    if (!video) return;
+
+    const watchdog = backgroundWatchdogRef.current;
+    const now = Date.now();
+    if (now - watchdog.lastRecovery < 4000) return;
+    watchdog.lastRecovery = now;
+    watchdog.stuckTicks = 0;
+
+    try {
+      if (reason === 'restart' || video.ended || video.error) {
+        video.currentTime = 0;
+      } else if (video.currentTime > 0.2) {
+        video.currentTime = Math.max(0, video.currentTime - 0.15);
+      }
+      video.play().catch(() => {});
+    } catch {
+      video.load();
+      video.play().catch(() => {});
+    }
+  }
+
   return (
     <>
       <video
@@ -289,7 +340,13 @@ export default function HomePage() {
         loop
         playsInline
         preload="auto"
-        onCanPlay={() => setBackgroundVideoError('')}
+        onCanPlay={() => {
+          backgroundWatchdogRef.current = { lastTime: 0, stuckTicks: 0, lastRecovery: 0 };
+          setBackgroundVideoError('');
+        }}
+        onWaiting={() => recoverBackgroundVideo('waiting')}
+        onStalled={() => recoverBackgroundVideo('stalled')}
+        onEnded={() => recoverBackgroundVideo('restart')}
         onError={(event) => {
           if (backgroundVideoUrl !== LOCAL_BACKGROUND_VIDEO) {
             setBackgroundSoundEnabled(false);
