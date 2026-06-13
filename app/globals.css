@@ -5,8 +5,8 @@
   --violet: #7c5cff;
   --blue: #00d4ff;
   --ink: #090315;
-  --glass: rgba(255, 255, 255, .12);
-  --glass-strong: rgba(20, 4, 35, .82);
+  --glass: rgba(255, 255, 255, .08);
+  --glass-strong: rgba(20, 4, 35, .70);
   --line: rgba(255, 255, 255, .22);
 }
 
@@ -66,8 +66,10 @@ code {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: rgba(5, 0, 15, .68);
-  backdrop-filter: blur(2px);
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 98, 200, .12), transparent 36%),
+    rgba(5, 0, 15, .38);
+  backdrop-filter: blur(1px);
 }
 
 @keyframes pulse {
@@ -85,8 +87,24 @@ code {
   align-items: center;
   padding: 12px;
   border-bottom: 1px solid var(--line);
-  background: rgba(10, 2, 20, .66);
+  background: rgba(10, 2, 20, .48);
   backdrop-filter: blur(14px);
+}
+
+.bgSoundControl {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 6;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, .45), transparent 18%),
+    linear-gradient(135deg, rgba(255, 98, 200, .78), rgba(0, 212, 255, .62));
+  box-shadow: 0 10px 34px rgba(0, 0, 0, .42);
+  backdrop-filter: blur(12px);
+  font-size: 12px;
 }
 
 .packs {
@@ -267,16 +285,41 @@ textarea {
 
 .gameCard {
   margin: 22px 0;
-  padding: 18px;
+  padding: 16px;
   border-radius: 24px;
+  background: rgba(255, 255, 255, .055);
+  box-shadow: 0 18px 62px rgba(0, 0, 0, .34);
+  backdrop-filter: blur(7px);
 }
 
 .video {
+  margin-top: 12px;
   width: 100%;
   aspect-ratio: 16 / 9;
   border: 0;
   border-radius: 18px;
   background: #000;
+}
+
+.gameVideoControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 36px;
+  margin-bottom: 8px;
+}
+
+.miniVideoButton {
+  padding: 7px 11px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, rgba(255, 98, 200, .72), rgba(124, 92, 255, .68)),
+    rgba(255, 255, 255, .12);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .28);
+  font-size: 12px;
+  letter-spacing: .02em;
+  backdrop-filter: blur(10px);
 }
 
 .videoEmpty {

@@ -50,7 +50,10 @@ export default function HomePage() {
   const [actionLoading, setActionLoading] = useState('');
   const [backgroundVideoUrl, setBackgroundVideoUrl] = useState(initialBackgroundVideoUrl);
   const [backgroundVideoError, setBackgroundVideoError] = useState('');
+  const [backgroundSoundEnabled, setBackgroundSoundEnabled] = useState(false);
+  const [visibleGameplayVideos, setVisibleGameplayVideos] = useState({});
   const audioRef = useRef(null);
+  const backgroundVideoRef = useRef(null);
 
   async function loadMe() {
     const data = await api('/api/me');
@@ -244,14 +247,45 @@ export default function HomePage() {
     }
   }
 
+  async function toggleBackgroundSound() {
+    const video = backgroundVideoRef.current;
+    if (!video) return;
+
+    if (backgroundSoundEnabled) {
+      video.muted = true;
+      setBackgroundSoundEnabled(false);
+      return;
+    }
+
+    video.muted = false;
+    video.volume = 0.45;
+    try {
+      await video.play();
+      setBackgroundSoundEnabled(true);
+      setBackgroundVideoError('');
+    } catch {
+      video.muted = true;
+      setBackgroundSoundEnabled(false);
+      setBackgroundVideoError('Браузер не дал включить звук автоматически. Нажми кнопку звука еще раз после любого клика по странице.');
+    }
+  }
+
+  function toggleGameplayVideo(gameId) {
+    setVisibleGameplayVideos((current) => ({
+      ...current,
+      [gameId]: !current[gameId]
+    }));
+  }
+
   return (
     <>
       <video
+        ref={backgroundVideoRef}
         key={backgroundVideoUrl}
         className="bgVideo"
         src={backgroundVideoUrl}
         autoPlay
-        muted
+        muted={!backgroundSoundEnabled}
         loop
         playsInline
         preload="auto"
@@ -263,6 +297,9 @@ export default function HomePage() {
       />
       <div className="bgFallback" />
       <div className="shade" />
+      <button className="bgSoundControl" type="button" onClick={toggleBackgroundSound}>
+        {backgroundSoundEnabled ? 'выключить звук фона' : 'включить звук фона'}
+      </button>
 
       <header className="topbar">
         {me && (
@@ -336,12 +373,20 @@ export default function HomePage() {
 
             {games.length ? games.map((game) => {
               const video = embedUrl(game.video_url);
+              const isGameplayVisible = Boolean(visibleGameplayVideos[game.id]);
               return (
                 <article className="gameCard" key={game.id}>
-                  {video ? (
+                  <div className="gameVideoControls">
+                    {video ? (
+                      <button className="miniVideoButton" type="button" onClick={() => toggleGameplayVideo(game.id)}>
+                        {isGameplayVisible ? 'скрыть видео' : 'посмотреть видео геймплея игры'}
+                      </button>
+                    ) : (
+                      <span className="small">Видео появится после добавления ссылки</span>
+                    )}
+                  </div>
+                  {video && isGameplayVisible && (
                     <iframe className="video" src={video} allowFullScreen loading="lazy" title={`Видео ${game.title}`} />
-                  ) : (
-                    <div className="video videoEmpty">Видео появится после добавления ссылки</div>
                   )}
                   <h2>{game.title}</h2>
                   <div className="meta">
