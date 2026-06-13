@@ -1,0 +1,29 @@
+{
+  "name": "game-packs-site",
+  "version": "1.0.0",
+  "description": "Vercel-ready anime game suggestion site with Discord OAuth, local auth, Supabase storage, voting, chat, and admin panel.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "check": "next build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.1",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.3",
+    "nanoid": "^5.1.11",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "postcss": "^8.5.15"
+  },
+  "overrides": {
+    "postcss": "$postcss"
+  }
+}
