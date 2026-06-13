@@ -45,7 +45,7 @@ export async function GET(request) {
 
   const db = supabaseAdmin();
   const { data: existing } = await db
-    .from('users')
+    .from('app_users')
     .select('id')
     .eq('discord_id', discordUser.id)
     .maybeSingle();
@@ -53,13 +53,13 @@ export async function GET(request) {
   let userId = existing?.id;
   if (userId) {
     const { error } = await db
-      .from('users')
+      .from('app_users')
       .update({ username, avatar_url: avatarUrl })
       .eq('id', userId);
     if (error) return NextResponse.redirect(`${siteUrl()}/?authError=discord_save`);
   } else {
     const { data: created, error } = await db
-      .from('users')
+      .from('app_users')
       .insert({
         public_id: `u_${nanoid(10)}`,
         provider: 'discord',
