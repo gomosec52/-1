@@ -69,6 +69,14 @@ ADMIN_IDS=
 
 Важно: `SUPABASE_SERVICE_ROLE_KEY` нельзя показывать пользователям и нельзя вставлять в frontend. В этом проекте он используется только в serverless API routes.
 
+Если Supabase пишет ошибку около `created_at`, чаще всего SQL был вставлен не целиком или без запятой на предыдущей строке. Очисти SQL Editor полностью и вставь весь `supabase/schema.sql` заново, начиная со строки:
+
+```sql
+create extension if not exists pgcrypto;
+```
+
+Не вставляй номера строк вида `L1:` / `L2:`.
+
 ## 3. Настрой Discord OAuth
 
 1. Открой [Discord Developer Portal](https://discord.com/developers/applications).

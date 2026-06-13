@@ -19,7 +19,7 @@ export async function POST(request) {
 
   const db = supabaseAdmin();
   const { data: existing } = await db
-    .from('users')
+    .from('app_users')
     .select('id')
     .eq('provider', 'local')
     .ilike('username', username)
@@ -31,7 +31,7 @@ export async function POST(request) {
 
   const passwordHash = await bcrypt.hash(password, 10);
   const { data: user, error } = await db
-    .from('users')
+    .from('app_users')
     .insert({
       public_id: `u_${nanoid(10)}`,
       provider: 'local',

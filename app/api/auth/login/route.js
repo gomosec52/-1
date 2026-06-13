@@ -10,7 +10,7 @@ export async function POST(request) {
   const password = String(body.password || '');
 
   const { data: user } = await supabaseAdmin()
-    .from('users')
+    .from('app_users')
     .select('id, password_hash')
     .eq('provider', 'local')
     .ilike('username', username)
