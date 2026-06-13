@@ -155,6 +155,7 @@ ADMIN_IDS=u_abc123,u_def456
 
 ```env
 NEXT_PUBLIC_SITE_URL=https://ТВОЙ-САЙТ.vercel.app
+BACKGROUND_VIDEO_URL=
 NEXT_PUBLIC_BACKGROUND_VIDEO_URL=
 AUTH_SECRET=длинный_секрет
 SUPABASE_URL=https://xxxxx.supabase.co
@@ -190,12 +191,19 @@ public/assets/anime-bg.mp4
 Потом в Vercel добавь Environment Variable:
 
 ```env
-NEXT_PUBLIC_BACKGROUND_VIDEO_URL=https://xxxxx.supabase.co/storage/v1/object/public/background/anime-bg.mp4
+BACKGROUND_VIDEO_URL=https://xxxxx.supabase.co/storage/v1/object/public/anime/animevideo.mp4
 ```
 
 После изменения переменной сделай redeploy.
 
-Важно: ссылка должна открывать именно видеофайл `.mp4`, а не страницу просмотра.
+Можно использовать и signed-ссылку Supabase вида `/storage/v1/object/sign/...`, но лучше сделать bucket/file публичным и использовать `/storage/v1/object/public/...`, потому что signed-ссылка со временем истечет.
+
+Важно:
+
+- ссылка должна открывать именно видеофайл `.mp4`, а не страницу просмотра;
+- не добавляй пробелы в начало/конец ссылки;
+- не добавляй точку в конце ссылки;
+- после изменения переменной на Vercel обязательно сделай redeploy.
 
 Если фонового видео нет или ссылка неправильная, сайт показывает встроенный anime-style градиент.
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { LOCAL_BACKGROUND_VIDEO, cleanBackgroundVideoUrl } from '@/lib/backgroundVideo';
 
 async function api(url, options = {}) {
   const response = await fetch(url, {
@@ -33,7 +34,7 @@ function voteNames(votes, choice) {
   return names.length ? names.join(', ') : 'никого';
 }
 
-const backgroundVideoUrl = process.env.NEXT_PUBLIC_BACKGROUND_VIDEO_URL || '/assets/anime-bg.mp4';
+const initialBackgroundVideoUrl = cleanBackgroundVideoUrl(process.env.NEXT_PUBLIC_BACKGROUND_VIDEO_URL) || LOCAL_BACKGROUND_VIDEO;
 
 export default function HomePage() {
   const [me, setMe] = useState(null);
@@ -47,6 +48,8 @@ export default function HomePage() {
   const [showScreamer, setShowScreamer] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState('');
+  const [backgroundVideoUrl, setBackgroundVideoUrl] = useState(initialBackgroundVideoUrl);
+  const [backgroundVideoError, setBackgroundVideoError] = useState('');
   const audioRef = useRef(null);
 
   async function loadMe() {
@@ -78,6 +81,16 @@ export default function HomePage() {
     if (url.searchParams.get('authError')) {
       setAuthMsg('Discord авторизация не прошла. Проверь настройки Redirect URI и Client Secret.');
     }
+
+    api('/api/site-config')
+      .then((config) => {
+        const nextUrl = cleanBackgroundVideoUrl(config.backgroundVideoUrl);
+        if (nextUrl) {
+          setBackgroundVideoUrl(nextUrl);
+          setBackgroundVideoError('');
+        }
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -233,7 +246,21 @@ export default function HomePage() {
 
   return (
     <>
-      <video className="bgVideo" src={backgroundVideoUrl} autoPlay muted loop playsInline preload="auto" onError={(event) => event.currentTarget.remove()} />
+      <video
+        key={backgroundVideoUrl}
+        className="bgVideo"
+        src={backgroundVideoUrl}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        onCanPlay={() => setBackgroundVideoError('')}
+        onError={(event) => {
+          event.currentTarget.remove();
+          setBackgroundVideoError('Фоновое видео не загрузилось. Проверь, что NEXT_PUBLIC_BACKGROUND_VIDEO_URL или BACKGROUND_VIDEO_URL открывает прямой mp4-файл без пробелов в ссылке.');
+        }}
+      />
       <div className="bgFallback" />
       <div className="shade" />
 
@@ -298,12 +325,14 @@ export default function HomePage() {
             </div>
 
             {authMsg && <p className="status error">{authMsg}</p>}
+            {backgroundVideoError && <p className="status error">{backgroundVideoError}</p>}
           </section>
         ) : (
           <section>
             <p className="eyebrow">выбери пак и голосуй</p>
             <h1 className="contentTitle">Пак игр {pack}</h1>
             {status && <p className="status">{status}</p>}
+            {backgroundVideoError && <p className="status error">{backgroundVideoError}</p>}
 
             {games.length ? games.map((game) => {
               const video = embedUrl(game.video_url);
