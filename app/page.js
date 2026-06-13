@@ -33,6 +33,8 @@ function voteNames(votes, choice) {
   return names.length ? names.join(', ') : 'никого';
 }
 
+const backgroundVideoUrl = process.env.NEXT_PUBLIC_BACKGROUND_VIDEO_URL || '/assets/anime-bg.mp4';
+
 export default function HomePage() {
   const [me, setMe] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -41,8 +43,10 @@ export default function HomePage() {
   const [messages, setMessages] = useState([]);
   const [authMsg, setAuthMsg] = useState('');
   const [status, setStatus] = useState('');
+  const [chatStatus, setChatStatus] = useState('');
   const [showScreamer, setShowScreamer] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState('');
   const audioRef = useRef(null);
 
   async function loadMe() {
@@ -65,8 +69,8 @@ export default function HomePage() {
   useEffect(() => {
     loadMe().then((user) => {
       if (user) {
-        loadGames(1);
-        loadChat();
+        loadGames(1).catch((error) => setStatus(error.message));
+        loadChat().catch((error) => setChatStatus(error.message));
       }
     }).catch((error) => setAuthMsg(error.message));
 
@@ -85,7 +89,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!me) return undefined;
-    const timer = setInterval(() => loadChat().catch(() => {}), 3000);
+    const timer = setInterval(() => loadChat().catch((error) => setChatStatus(error.message)), 3000);
     return () => clearInterval(timer);
   }, [me]);
 
@@ -169,37 +173,67 @@ export default function HomePage() {
   }
 
   async function react(gameId, value) {
-    await api(`/api/games/${gameId}/reaction`, {
-      method: 'POST',
-      body: JSON.stringify({ value })
-    });
-    await loadGames(pack);
+    if (actionLoading) return;
+    setStatus(value === 1 ? 'Ставлю лайк...' : 'Ставлю дизлайк...');
+    setActionLoading(`reaction-${gameId}`);
+    try {
+      await api(`/api/games/${gameId}/reaction`, {
+        method: 'POST',
+        body: JSON.stringify({ value })
+      });
+      await loadGames(pack);
+      setStatus('');
+    } catch (error) {
+      setStatus(error.message);
+    } finally {
+      setActionLoading('');
+    }
   }
 
   async function vote(gameId, choice) {
-    await api(`/api/games/${gameId}/vote`, {
-      method: 'POST',
-      body: JSON.stringify({ choice })
-    });
-    await loadGames(pack);
+    if (actionLoading) return;
+    setStatus('Сохраняю голос...');
+    setActionLoading(`vote-${gameId}`);
+    try {
+      await api(`/api/games/${gameId}/vote`, {
+        method: 'POST',
+        body: JSON.stringify({ choice })
+      });
+      await loadGames(pack);
+      setStatus('');
+    } catch (error) {
+      setStatus(error.message);
+    } finally {
+      setActionLoading('');
+    }
   }
 
   async function sendMessage(event) {
     event.preventDefault();
+    if (actionLoading === 'chat') return;
     const form = event.currentTarget;
     const message = form.message.value.trim();
     if (!message) return;
-    await api('/api/chat', {
-      method: 'POST',
-      body: JSON.stringify({ message })
-    });
-    form.reset();
-    await loadChat();
+    setChatStatus('Отправляю сообщение...');
+    setActionLoading('chat');
+    try {
+      await api('/api/chat', {
+        method: 'POST',
+        body: JSON.stringify({ message })
+      });
+      form.reset();
+      await loadChat();
+      setChatStatus('');
+    } catch (error) {
+      setChatStatus(error.message);
+    } finally {
+      setActionLoading('');
+    }
   }
 
   return (
     <>
-      <video className="bgVideo" src="/assets/anime-bg.mp4" autoPlay muted loop playsInline onError={(event) => event.currentTarget.remove()} />
+      <video className="bgVideo" src={backgroundVideoUrl} autoPlay muted loop playsInline preload="auto" onError={(event) => event.currentTarget.remove()} />
       <div className="bgFallback" />
       <div className="shade" />
 
@@ -288,12 +322,12 @@ export default function HomePage() {
                   </div>
                   <p>{game.description}</p>
                   <div className="actions">
-                    <button type="button" onClick={() => react(game.id, 1)}>Лайк {game.likes || 0}</button>
-                    <button type="button" onClick={() => react(game.id, -1)}>Дизлайк {game.dislikes || 0}</button>
+                    <button type="button" disabled={Boolean(actionLoading)} onClick={() => react(game.id, 1)}>Лайк {game.likes || 0}</button>
+                    <button type="button" disabled={Boolean(actionLoading)} onClick={() => react(game.id, -1)}>Дизлайк {game.dislikes || 0}</button>
                   </div>
                   <div className="votes">
-                    <button type="button" onClick={() => vote(game.id, 'yes')}>играем</button>
-                    <button type="button" onClick={() => vote(game.id, 'no')}>не играем</button>
+                    <button type="button" disabled={Boolean(actionLoading)} onClick={() => vote(game.id, 'yes')}>играем</button>
+                    <button type="button" disabled={Boolean(actionLoading)} onClick={() => vote(game.id, 'no')}>не играем</button>
                   </div>
                   <div className="voteList">
                     <b>Играем:</b> {voteNames(game.votes || [], 'yes')}<br />
@@ -321,8 +355,9 @@ export default function HomePage() {
           </div>
           <form onSubmit={sendMessage}>
             <input name="message" maxLength={300} placeholder="Написать..." autoComplete="off" />
-            <button aria-label="Отправить">➤</button>
+            <button disabled={actionLoading === 'chat'} aria-label="Отправить">{actionLoading === 'chat' ? '...' : '➤'}</button>
           </form>
+          {chatStatus && <p className="status error">{chatStatus}</p>}
         </aside>
       )}
 

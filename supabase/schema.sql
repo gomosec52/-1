@@ -27,6 +27,12 @@ create table if not exists games (
   created_at timestamptz not null default now()
 );
 
+-- These tables depend on app_users. Dropping them makes rerunning this schema fix
+-- old installs that were created with a users -> reactions/votes/chat relation.
+drop table if exists chat_messages;
+drop table if exists votes;
+drop table if exists reactions;
+
 create table if not exists reactions (
   user_id uuid not null references app_users(id) on delete cascade,
   game_id bigint not null references games(id) on delete cascade,
