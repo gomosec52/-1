@@ -42,6 +42,7 @@ export default function HomePage() {
   const [authMsg, setAuthMsg] = useState('');
   const [status, setStatus] = useState('');
   const [showScreamer, setShowScreamer] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
   const audioRef = useRef(null);
 
   async function loadMe() {
@@ -90,16 +91,25 @@ export default function HomePage() {
 
   async function submitLogin(event) {
     event.preventDefault();
+    if (authLoading) return;
     setAuthMsg('');
+    setAuthLoading(true);
     try {
       await api('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget)))
       });
-      await loadMe();
-      await Promise.all([loadGames(pack), loadChat()]);
+      const user = await loadMe();
+      if (user) {
+        await Promise.all([
+          loadGames(pack).catch((error) => setStatus(error.message)),
+          loadChat().catch((error) => setStatus(error.message))
+        ]);
+      }
     } catch (error) {
       setAuthMsg(error.message);
+    } finally {
+      setAuthLoading(false);
     }
   }
 
@@ -115,8 +125,10 @@ export default function HomePage() {
 
   function submitRegister(event) {
     event.preventDefault();
+    if (authLoading) return;
     const form = event.currentTarget;
-    setAuthMsg('');
+    setAuthMsg('Регистрирую аккаунт...');
+    setAuthLoading(true);
     playScreamer();
     setTimeout(async () => {
       try {
@@ -124,10 +136,20 @@ export default function HomePage() {
           method: 'POST',
           body: JSON.stringify(Object.fromEntries(new FormData(form)))
         });
-        await loadMe();
-        await Promise.all([loadGames(pack), loadChat()]);
+        const user = await loadMe();
+        if (user) {
+          setAuthMsg('');
+          await Promise.all([
+            loadGames(pack).catch((error) => setStatus(error.message)),
+            loadChat().catch((error) => setStatus(error.message))
+          ]);
+        } else {
+          setAuthMsg('Аккаунт создан, но сессия не загрузилась. Обнови страницу.');
+        }
       } catch (error) {
         setAuthMsg(error.message);
+      } finally {
+        setAuthLoading(false);
       }
     }, 900);
   }
@@ -230,14 +252,14 @@ export default function HomePage() {
                 <h3>Вход</h3>
                 <input name="username" placeholder="ник" autoComplete="username" required />
                 <input name="password" type="password" placeholder="пароль" autoComplete="current-password" required />
-                <button>Войти</button>
+                <button disabled={authLoading}>{authLoading ? 'Подожди...' : 'Войти'}</button>
               </form>
 
               <form onSubmit={submitRegister}>
                 <h3>Регистрация</h3>
                 <input name="username" placeholder="ник" minLength={2} maxLength={32} autoComplete="username" required />
                 <input name="password" type="password" placeholder="пароль" minLength={4} autoComplete="new-password" required />
-                <button>Зарегистрироваться</button>
+                <button disabled={authLoading}>{authLoading ? 'Регистрирую...' : 'Зарегистрироваться'}</button>
               </form>
             </div>
 
