@@ -92,6 +92,8 @@ create extension if not exists pgcrypto;
 
 Не вставляй номера строк вида `L1:` / `L2:`.
 
+Если регистрация уже работает, но чат, лайки или голосование не сохраняются, заново выполни свежий `supabase/schema.sql` целиком. Он пересоздает таблицы `chat_messages`, `votes` и `reactions` с правильной связью на `app_users`.
+
 ## 3. Настрой Discord OAuth
 
 1. Открой [Discord Developer Portal](https://discord.com/developers/applications).
@@ -153,6 +155,7 @@ ADMIN_IDS=u_abc123,u_def456
 
 ```env
 NEXT_PUBLIC_SITE_URL=https://ТВОЙ-САЙТ.vercel.app
+NEXT_PUBLIC_BACKGROUND_VIDEO_URL=
 AUTH_SECRET=длинный_секрет
 SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=твой_service_role_key
@@ -166,13 +169,35 @@ ADMIN_IDS=
 
 ## 6. Фоновое видео
 
-Положи файл сюда:
+Есть 2 варианта.
+
+### Вариант A: файл в репозитории
+
+Положи mp4-файл сюда:
 
 ```txt
 public/assets/anime-bg.mp4
 ```
 
-Видео лучше сделать коротким и зацикленным, например 5-15 секунд. Если файла нет, сайт показывает встроенный anime-style градиент.
+Если файл называется именно `anime-bg.mp4`, сайт сам поставит его на фон. Видео будет без звука, автоматически запускаться и повторяться по кругу.
+
+Для Vercel и GitHub лучше, чтобы файл был не слишком тяжелым. Если твое видео 3 минуты и много весит, лучше использовать вариант B.
+
+### Вариант B: ссылка на mp4
+
+Загрузи видео в публичное хранилище, например Supabase Storage, и получи прямую публичную ссылку на `.mp4`.
+
+Потом в Vercel добавь Environment Variable:
+
+```env
+NEXT_PUBLIC_BACKGROUND_VIDEO_URL=https://xxxxx.supabase.co/storage/v1/object/public/background/anime-bg.mp4
+```
+
+После изменения переменной сделай redeploy.
+
+Важно: ссылка должна открывать именно видеофайл `.mp4`, а не страницу просмотра.
+
+Если фонового видео нет или ссылка неправильная, сайт показывает встроенный anime-style градиент.
 
 Если хочешь скинуть видео агенту/разработчику, загрузи файл в чат и попроси положить его как:
 
