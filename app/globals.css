@@ -1,12 +1,12 @@
 :root {
   color-scheme: dark;
   --pink: #ff62c8;
-  --pink-soft: #ff9ee4;
+  --pink-soft: #ffabe5;
   --violet: #7c5cff;
   --blue: #00d4ff;
   --ink: #090315;
-  --glass: rgba(255, 255, 255, .11);
-  --glass-strong: rgba(20, 4, 35, .78);
+  --glass: rgba(255, 255, 255, .12);
+  --glass-strong: rgba(20, 4, 35, .82);
   --line: rgba(255, 255, 255, .22);
 }
 
@@ -18,22 +18,29 @@ body {
   margin: 0;
   min-height: 100vh;
   color: #fff;
-  background: #14091f;
-  font-family: Inter, Arial, sans-serif;
+  background: #12071f;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 a {
   color: #fff;
 }
 
-code {
-  padding: 2px 6px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, .13);
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
-.bg-video,
-.bg-gif {
+code {
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .14);
+}
+
+.bgVideo,
+.bgFallback {
   position: fixed;
   inset: 0;
   z-index: -3;
@@ -42,7 +49,7 @@ code {
   object-fit: cover;
 }
 
-.bg-gif {
+.bgFallback {
   background:
     radial-gradient(circle at 18% 18%, rgba(255, 119, 217, .46), transparent 28%),
     radial-gradient(circle at 83% 24%, rgba(124, 92, 255, .52), transparent 31%),
@@ -55,17 +62,17 @@ code {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: rgba(5, 0, 15, .66);
+  background: rgba(5, 0, 15, .68);
   backdrop-filter: blur(2px);
 }
 
 @keyframes pulse {
   to {
-    filter: hue-rotate(30deg) brightness(1.15);
+    filter: hue-rotate(28deg) brightness(1.14);
   }
 }
 
-header {
+.topbar {
   position: sticky;
   top: 0;
   z-index: 5;
@@ -74,11 +81,38 @@ header {
   align-items: center;
   padding: 12px;
   border-bottom: 1px solid var(--line);
-  background: rgba(10, 2, 20, .65);
-  backdrop-filter: blur(12px);
+  background: rgba(10, 2, 20, .66);
+  backdrop-filter: blur(14px);
 }
 
-.secret,
+.packs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.profile {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border: 2px solid #fff;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.profileLinks {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
 .btn,
 button {
   position: relative;
@@ -88,7 +122,7 @@ button {
   padding: 10px 14px;
   color: #fff;
   background:
-    radial-gradient(circle at var(--art-pos, 18%) 0%, rgba(255, 255, 255, .55), transparent 18%),
+    radial-gradient(circle at var(--art-pos, 18%) 0%, rgba(255, 255, 255, .56), transparent 18%),
     linear-gradient(135deg, var(--pink), var(--violet) 58%, var(--blue));
   box-shadow: 0 8px 22px rgba(0, 0, 0, .45), inset 0 1px rgba(255, 255, 255, .25);
   font-weight: 800;
@@ -96,7 +130,6 @@ button {
   cursor: pointer;
 }
 
-.secret::after,
 .btn::after,
 button::after {
   content: "";
@@ -109,36 +142,14 @@ button::after {
   pointer-events: none;
 }
 
-button:hover,
 .btn:hover,
-.secret:hover {
+button:hover {
   transform: translateY(-1px);
 }
 
-nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-nav button.active {
+button.active {
   outline: 2px solid #fff;
-  box-shadow: 0 0 25px rgba(255, 98, 200, .7);
-}
-
-#profile {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-left: auto;
-}
-
-.profileLinks {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 4px;
+  box-shadow: 0 0 25px rgba(255, 98, 200, .72);
 }
 
 .linkButton {
@@ -147,8 +158,8 @@ nav button.active {
   background: none;
   box-shadow: none;
   color: #fff;
-  font: inherit;
   font-size: 12px;
+  font-weight: 400;
   text-decoration: underline;
 }
 
@@ -156,17 +167,30 @@ nav button.active {
   display: none;
 }
 
-.avatar {
-  width: 46px;
-  height: 46px;
-  border: 2px solid #fff;
-  border-radius: 16px;
-  object-fit: cover;
+main {
+  max-width: 1120px;
+  margin: auto;
+  padding: 28px;
 }
 
-.small {
-  opacity: .82;
-  font-size: 12px;
+.panel,
+.gameCard,
+.chat,
+.adminCard {
+  border: 1px solid var(--line);
+  background: var(--glass);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, .53);
+  backdrop-filter: blur(12px);
+}
+
+.panel {
+  border-radius: 26px;
+  padding: 26px;
+}
+
+.hero {
+  max-width: 850px;
+  margin: 42px auto;
 }
 
 .eyebrow {
@@ -178,24 +202,15 @@ nav button.active {
   text-transform: uppercase;
 }
 
-main {
-  max-width: 1100px;
-  margin: auto;
-  padding: 26px;
+h1 {
+  margin: 0 0 12px;
+  font-size: clamp(34px, 6vw, 76px);
+  line-height: .95;
 }
 
-.panel {
-  border: 1px solid rgba(255, 255, 255, .18);
-  border-radius: 24px;
-  padding: 24px;
-  background: var(--glass);
-  box-shadow: 0 20px 70px rgba(0, 0, 0, .53);
-  backdrop-filter: blur(12px);
-}
-
-.auth {
-  max-width: 800px;
-  margin: 40px auto;
+.subtitle {
+  max-width: 720px;
+  color: rgba(255, 255, 255, .84);
 }
 
 .grid2 {
@@ -214,7 +229,7 @@ select {
   border: 1px solid rgba(255, 255, 255, .24);
   border-radius: 12px;
   color: #fff;
-  background: rgba(9, 3, 21, .80);
+  background: rgba(9, 3, 21, .82);
   outline: none;
 }
 
@@ -226,21 +241,30 @@ select:focus {
 }
 
 textarea {
-  min-height: 110px;
+  min-height: 120px;
   resize: vertical;
 }
 
-.hidden {
-  display: none !important;
+.status,
+.small,
+.empty,
+.voteList {
+  color: rgba(255, 255, 255, .82);
+  font-size: 13px;
 }
 
-.game {
+.status.error {
+  color: #ffb5b5;
+}
+
+.contentTitle {
+  margin-top: 22px;
+}
+
+.gameCard {
   margin: 22px 0;
   padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: rgba(255, 255, 255, .12);
-  backdrop-filter: blur(10px);
+  border-radius: 24px;
 }
 
 .video {
@@ -276,45 +300,32 @@ textarea {
   background: rgba(255, 255, 255, .14);
 }
 
-.voteList,
-.status,
-.empty {
-  opacity: .9;
-  font-size: 14px;
-}
-
-.status.error {
-  color: #ffb5b5;
-}
-
 .chat {
   position: fixed;
   right: 16px;
   bottom: 16px;
-  width: 320px;
-  max-height: 430px;
+  z-index: 4;
+  width: 330px;
+  max-height: 440px;
   padding: 12px;
-  border: 1px solid var(--line);
   border-radius: 20px;
   background: var(--glass-strong);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, .55);
-  backdrop-filter: blur(12px);
 }
 
-.chat #chatMessages {
-  height: 280px;
+.chatMessages {
+  height: 285px;
   margin: 8px 0;
   overflow: auto;
 }
 
-.msg {
-  margin: 5px 0;
+.message {
+  margin: 6px 0;
   padding: 8px;
   border-radius: 12px;
   background: rgba(255, 255, 255, .10);
 }
 
-.msg p {
+.message p {
   margin: 4px 0 0;
   word-break: break-word;
 }
@@ -335,8 +346,12 @@ textarea {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle, rgba(120, 0, 0, .6), #000 55%),
+    radial-gradient(circle, rgba(120, 0, 0, .64), #000 55%),
     #000;
+}
+
+.screamer.hidden {
+  display: none;
 }
 
 .screamer img {
@@ -364,32 +379,8 @@ textarea {
   }
 }
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-}
-
-.gallery img,
-.placeholder {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  object-fit: cover;
-  background: linear-gradient(135deg, #ff8ad8, #7766ff);
-}
-
-.placeholder {
-  display: grid;
-  place-items: center;
-  text-align: center;
-  font-size: 26px;
-  font-weight: 900;
-}
-
 .admin {
-  max-width: 1000px;
+  max-width: 1040px;
 }
 
 .adminForm {
@@ -398,7 +389,7 @@ textarea {
   gap: 12px;
 }
 
-.adminForm label:nth-child(8) {
+.adminForm .wide {
   grid-column: 1 / -1;
 }
 
@@ -409,17 +400,22 @@ textarea {
   margin: 10px 0;
   padding: 14px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, .10);
 }
 
-.adminCard > div:last-child {
+.adminActions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
 }
 
-@media (max-width: 760px) {
+.danger {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, .5), transparent 18%),
+    linear-gradient(135deg, #ff4b72, #7c1bff);
+}
+
+@media (max-width: 780px) {
   .grid2,
   .adminForm {
     grid-template-columns: 1fr;
@@ -431,20 +427,16 @@ textarea {
     margin: 16px;
   }
 
-  .secret {
-    font-size: 12px;
-  }
-
   main {
     padding: 14px;
   }
 
-  header {
+  .topbar {
     align-items: flex-start;
     flex-wrap: wrap;
   }
 
-  #profile {
+  .profile {
     width: 100%;
     margin-left: 0;
   }
