@@ -1,45 +1,174 @@
-# Game Packs Anime Site
+# Anime Game Packs
 
-Функции: Discord OAuth, обычная регистрация, SQLite база, лайки/дизлайки, голосование с никами, realtime-чат, админ-панель для игр, 5 паков игр.
+Сайт-предложка игр для друзей в anime/glass стиле.
+
+Что уже есть:
+
+- вход через Discord OAuth;
+- обычная регистрация по нику и паролю;
+- личный `Site ID` для каждого пользователя;
+- 5 паков игр;
+- карточки игр с видео, весом, мультиплеером, жанром и описанием;
+- лайки/дизлайки, которые видны всем;
+- голосование `играем` / `не играем` со списком ников;
+- realtime-чат в правом нижнем углу;
+- админ-панель для добавления, редактирования и удаления игр;
+- скример при обычной регистрации.
 
 ## Запуск локально
+
+Нужен Node.js 20+.
+
 ```bash
 npm install
 cp .env.example .env
 npm run dev
 ```
-Открой: http://localhost:3000
 
-## Discord OAuth
-1. Открой Discord Developer Portal → New Application.
-2. OAuth2 → добавь Redirect URI:
-   - локально: `http://localhost:3000/auth/discord/callback`
-   - на хостинге: `https://ТВОЙ-ДОМЕН/auth/discord/callback`
-3. Скопируй Client ID и Client Secret в `.env`.
-4. В `BASE_URL` укажи адрес сайта без `/` в конце.
+Открой: <http://localhost:3000>
 
-Используются scopes: `identify`.
+## Настройка Discord OAuth
 
-## Админка
-1. Зарегистрируйся/войди.
-2. В правом верхнем углу увидишь свой `Site ID`.
-3. Вставь его в `.env` в `ADMIN_IDS=...`.
-4. Перезапусти сервер.
-5. Открой `/admin`.
+1. Открой [Discord Developer Portal](https://discord.com/developers/applications).
+2. Нажми **New Application**.
+3. Открой **OAuth2**.
+4. Скопируй **Client ID** и **Client Secret** в `.env`:
 
-Можно вписать несколько админов через запятую.
+```env
+DISCORD_CLIENT_ID=твой_client_id
+DISCORD_CLIENT_SECRET=твой_client_secret
+```
+
+5. В **OAuth2 -> Redirects** добавь:
+
+```txt
+http://localhost:3000/auth/discord/callback
+```
+
+Для хостинга добавь второй redirect:
+
+```txt
+https://ТВОЙ-ДОМЕН/auth/discord/callback
+```
+
+6. В `.env` укажи адрес сайта без `/` в конце:
+
+```env
+BASE_URL=http://localhost:3000
+```
+
+На хостинге это будет примерно:
+
+```env
+BASE_URL=https://my-game-packs.example.com
+```
+
+Используется только scope `identify`, то есть сайт получает ник, Discord ID и аватарку.
+
+## Обычная регистрация
+
+Пользователь вводит ник и пароль. Данные сохраняются в SQLite:
+
+- `data.sqlite` - пользователи, игры, реакции, голосования, чат;
+- `sessions.sqlite` - сессии входа.
+
+Пароли хранятся не как обычный текст, а как bcrypt-хэш.
+
+## Как включить админку
+
+1. Зарегистрируйся или войди через Discord.
+2. Справа сверху появится `Твой Site ID`.
+3. Скопируй его.
+4. Впиши в `.env`:
+
+```env
+ADMIN_IDS=u_твой_id
+```
+
+5. Перезапусти сервер.
+6. Открой `/admin`.
+
+Несколько админов можно указать через запятую:
+
+```env
+ADMIN_IDS=u_abc123,u_def456
+```
+
+## Как добавить фоновое видео
+
+Положи файл в проект:
+
+```txt
+public/assets/anime-bg.mp4
+```
+
+После этого сайт сам поставит его на фон. Видео лучше сделать коротким и зацикленным, например 5-15 секунд. Если файла нет, сайт показывает встроенный anime-style градиент.
+
+Если хочешь отправить видео другому человеку или агенту, просто загрузи файл в чат/таску и скажи: "поставь это видео как `public/assets/anime-bg.mp4`".
 
 ## Скример
-Файл звука положи сюда: `public/assets/scream.mp3`.
-Картинку/гифку для скримера положи сюда: `public/assets/screamer.gif`.
-Если файлов нет, сайт покажет встроенный CSS-оверлей без внешних ссылок.
 
-## Фон и галерея
-Чтобы не зависеть от чужих ссылок и авторских прав, положи свои файлы:
-- фон: `public/assets/anime-bg.gif` или `anime-bg.mp4`
-- галерея: `public/assets/gallery-1.jpg` ... `gallery-10.jpg`
+Файлы:
 
-Без файлов сайт покажет встроенные anime-style SVG-заглушки.
+```txt
+public/assets/scream.mp3
+public/assets/screamer.gif
+```
 
-## Деплой
-На бесплатном хостинге с SQLite важно иметь persistent disk, иначе база будет сбрасываться при перезапусках. Лучший вариант для 24/7 — VPS, но для MVP можно Render/Koyeb/Railway с ограничениями.
+Если `screamer.gif` отсутствует, сайт все равно покажет полноэкранный CSS-оверлей с текстом `БУ!`. Звук начнет играть только после клика по регистрации, потому что браузеры блокируют автоматический звук без действия пользователя.
+
+## Видео игр
+
+В админке можно вставить обычную YouTube-ссылку:
+
+```txt
+https://www.youtube.com/watch?v=VIDEO_ID
+```
+
+Или embed-ссылку:
+
+```txt
+https://www.youtube.com/embed/VIDEO_ID
+```
+
+## Деплой и Vercel
+
+Для этого проекта важны две вещи:
+
+1. база должна сохраняться после перезапуска;
+2. realtime-чат работает через WebSocket/Socket.IO.
+
+Из-за этого обычный бесплатный Vercel не является лучшим вариантом для текущей Express + SQLite версии: serverless-функции не подходят для постоянного Socket.IO-сервера, а локальный SQLite-файл может не сохраняться как постоянная база.
+
+Хорошие варианты для MVP:
+
+- Render с persistent disk;
+- Railway;
+- Koyeb;
+- Fly.io;
+- недорогой VPS.
+
+Если принципиально нужен Vercel, лучше переделать backend под внешние сервисы:
+
+- база: Supabase Postgres, Neon или Vercel Postgres;
+- realtime: Supabase Realtime, Ably или Pusher;
+- авторизация: Discord OAuth через серверные API routes или через Supabase Auth.
+
+Текущая версия специально сделана простой для обучения: один Node/Express сервер, SQLite и обычные HTML/CSS/JS файлы.
+
+## Переменные окружения
+
+Смотри `.env.example`.
+
+В продакшене обязательно замени:
+
+```env
+SESSION_SECRET=change_me_to_a_long_random_string
+```
+
+Если сайт работает строго по HTTPS за proxy, можно включить:
+
+```env
+COOKIE_SECURE=true
+TRUST_PROXY=true
+```

@@ -1,1 +1,59 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><link rel="stylesheet" href="/css/style.css"></head><body><div class="shade"></div><main class="admin panel"><h1>Админ-панель</h1><p><a href="/">← на сайт</a></p><form id="gameForm" class="adminForm"><input type="hidden" name="id"><label>Пак<select name="pack"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label><label>Видео iframe/embed URL<input name="video_url" placeholder="https://www.youtube.com/embed/..."></label><label>Название<input name="title"></label><label>Вес<input name="size"></label><label>Мультиплеер<input name="multiplayer" placeholder="до 4 игроков"></label><label>Жанр<input name="genre"></label><label>Описание<textarea name="description"></textarea></label><button>Сохранить игру</button><button type="button" id="resetBtn">Очистить</button></form><h2>Игры</h2><div id="adminGames"></div></main><script src="/js/admin.js"></script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin | Anime Game Packs</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="bg-gif"></div>
+  <div class="shade"></div>
+
+  <main class="admin panel">
+    <p><a href="/">← на сайт</a></p>
+    <p class="eyebrow">панель владельца</p>
+    <h1>Админ-панель</h1>
+    <p>Здесь можно добавить игру в любой из 5 паков, отредактировать карточку или удалить ее. Для YouTube можно вставить обычную ссылку вида <code>https://www.youtube.com/watch?v=...</code> или embed-ссылку.</p>
+    <p id="adminStatus" class="status"></p>
+
+    <form id="gameForm" class="adminForm">
+      <input type="hidden" name="id">
+      <label>Пак
+        <select name="pack">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </label>
+      <label>Видео URL
+        <input name="video_url" placeholder="https://www.youtube.com/watch?v=...">
+      </label>
+      <label>Название
+        <input name="title" maxlength="80" required>
+      </label>
+      <label>Вес
+        <input name="size" maxlength="40" placeholder="12 GB">
+      </label>
+      <label>Мультиплеер
+        <input name="multiplayer" maxlength="80" placeholder="до 4 игроков">
+      </label>
+      <label>Жанр
+        <input name="genre" maxlength="80" placeholder="Co-op / Horror">
+      </label>
+      <label>Описание
+        <textarea name="description" maxlength="1200"></textarea>
+      </label>
+      <button>Сохранить игру</button>
+      <button type="button" id="resetBtn">Очистить</button>
+    </form>
+
+    <h2>Игры</h2>
+    <div id="adminGames"></div>
+  </main>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
