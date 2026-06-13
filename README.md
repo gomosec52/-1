@@ -55,6 +55,21 @@ http://localhost:3000
    - Project URL;
    - `service_role` key.
 
+`SUPABASE_URL` должен выглядеть именно так:
+
+```txt
+https://xxxxx.supabase.co
+```
+
+Не вставляй в `SUPABASE_URL` такие варианты:
+
+```txt
+https://xxxxx.supabase.co/rest/v1
+https://xxxxx.supabase.co/auth/v1
+```
+
+Иначе сайт может показать ошибку `Invalid path specified in request URL`.
+
 Заполни `.env.local`:
 
 ```env
