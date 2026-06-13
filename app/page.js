@@ -291,8 +291,14 @@ export default function HomePage() {
         preload="auto"
         onCanPlay={() => setBackgroundVideoError('')}
         onError={(event) => {
+          if (backgroundVideoUrl !== LOCAL_BACKGROUND_VIDEO) {
+            setBackgroundSoundEnabled(false);
+            setBackgroundVideoUrl(LOCAL_BACKGROUND_VIDEO);
+            setBackgroundVideoError('Внешнее фоновое видео не загрузилось без VPN, поэтому сайт переключился на локальный файл.');
+            return;
+          }
           event.currentTarget.remove();
-          setBackgroundVideoError('Фоновое видео не загрузилось. Проверь, что NEXT_PUBLIC_BACKGROUND_VIDEO_URL или BACKGROUND_VIDEO_URL открывает прямой mp4-файл без пробелов в ссылке.');
+          setBackgroundVideoError('Фоновое видео не загрузилось даже из локального файла /assets/anime-bg.mp4.');
         }}
       />
       <div className="bgFallback" />
