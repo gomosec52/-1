@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getCurrentUser, isAdmin } from '@/lib/auth';
 import { gamePayload } from '@/lib/gamePayload';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { notifyDiscordGameAdded } from '@/lib/discordWebhook';
 
 async function requireAdminUser() {
   const user = await getCurrentUser();
@@ -24,14 +25,21 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  if (!await requireAdminUser()) {
+  const admin = await requireAdminUser();
+  if (!admin) {
     return NextResponse.json({ error: 'Нет доступа' }, { status: 403 });
   }
 
   const payload = gamePayload(await request.json().catch(() => ({})));
   if (!payload.title) return NextResponse.json({ error: 'Нужно название' }, { status: 400 });
 
-  const { error } = await supabaseAdmin().from('games').insert(payload);
+  const { data: game, error } = await supabaseAdmin()
+    .from('games')
+    .insert(payload)
+    .select('*')
+    .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await notifyDiscordGameAdded({ game, admin });
   return NextResponse.json({ ok: true });
 }
