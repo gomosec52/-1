@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160">
+  <defs>
+    <pattern id="tone" width="14" height="14" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="1.4" fill="#111" opacity=".30"/>
+      <circle cx="10" cy="10" r="1" fill="#111" opacity=".20"/>
+    </pattern>
+  </defs>
+  <rect width="480" height="160" fill="#f8f6ef"/>
+  <rect width="480" height="160" fill="url(#tone)" opacity=".8"/>
+  <path d="M20 20h440v120H20z" fill="rgba(255,255,255,.62)" stroke="#080808" stroke-width="8"/>
+  <path d="M20 82h440M156 20v120M314 20v120" stroke="#080808" stroke-width="6"/>
+  <g stroke="#080808" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M66 50c22-18 51-18 74 0M68 91c23 15 50 15 77-2" stroke-width="8"/>
+    <path d="M52 35c31-39 92-39 124-2M58 31c-10-25 3-47 31-59" stroke-width="9"/>
+    <path d="M205 46c29-24 68-24 96 2M205 96c34 17 70 15 106-3" stroke-width="9"/>
+    <path d="M347 48c22-20 51-21 75-1M346 93c26 16 56 15 88-3" stroke-width="8"/>
+    <path d="M333 34c30-35 89-38 124-4M378 23c31-22 64-13 89 21" stroke-width="9"/>
+  </g>
+  <path d="M-4 144c80-18 162-20 247-5s164 15 241-4" fill="none" stroke="#111" stroke-width="4" opacity=".34"/>
+</svg>
