@@ -79,6 +79,7 @@ SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=твой_service_role_key
 DISCORD_CLIENT_ID=
 DISCORD_CLIENT_SECRET=
+DISCORD_WEBHOOK_URL=
 ADMIN_IDS=
 ```
 
@@ -120,7 +121,29 @@ https://ТВОЙ-САЙТ.vercel.app/api/auth/discord/callback
 
 Используется только scope `identify`: сайт получает Discord ID, ник и аватарку.
 
-## 4. Как включить админку
+## 4. Discord уведомления в канал
+
+Можно отправлять уведомления в Discord-канал сервера друзей:
+
+- когда админ добавил новую игру;
+- когда пользователь впервые проголосовал за игру или изменил голос.
+
+Настройка:
+
+1. В Discord открой нужный канал.
+2. **Edit Channel / Настроить канал**.
+3. **Integrations / Интеграции**.
+4. **Webhooks**.
+5. Создай webhook и скопируй URL.
+6. Добавь в `.env.local` или Vercel Environment Variables:
+
+```env
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+```
+
+Если `DISCORD_WEBHOOK_URL` пустой, сайт просто не отправляет уведомления.
+
+## 5. Как включить админку
 
 1. Зарегистрируйся или войди через Discord.
 2. Справа сверху появится `Твой Site ID`.
@@ -146,7 +169,7 @@ ADMIN_IDS=u_abc123,u_def456
 
 На Vercel после изменения `ADMIN_IDS` нужно обновить Environment Variables и сделать redeploy.
 
-## 5. Деплой на Vercel
+## 6. Деплой на Vercel
 
 1. Залей репозиторий на GitHub.
 2. На [vercel.com](https://vercel.com) нажми **Add New Project**.
@@ -162,13 +185,14 @@ SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=твой_service_role_key
 DISCORD_CLIENT_ID=твой_client_id
 DISCORD_CLIENT_SECRET=твой_client_secret
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 ADMIN_IDS=
 ```
 
 5. Нажми **Deploy**.
 6. После первого входа скопируй свой `Site ID`, добавь его в `ADMIN_IDS` на Vercel и сделай redeploy.
 
-## 6. Фоновое видео
+## 7. Фоновое видео
 
 Есть 2 варианта.
 
@@ -243,7 +267,7 @@ public/assets/anime-bg.mp4
 public/assets/anime-bg.mp4
 ```
 
-## 7. Скример
+## 8. Скример
 
 Файлы:
 
@@ -254,7 +278,7 @@ public/assets/screamer.gif
 
 Если `screamer.gif` нет, сайт все равно покажет полноэкранный оверлей с текстом `БУ!`. Звук запускается после клика по регистрации, потому что браузеры блокируют автоматический звук без действия пользователя.
 
-## 8. Видео игр
+## 9. Видео игр
 
 В админке можно вставлять:
 
@@ -268,7 +292,7 @@ https://www.youtube.com/watch?v=VIDEO_ID
 https://www.youtube.com/embed/VIDEO_ID
 ```
 
-## 9. Про чат и обновления у всех
+## 10. Про чат и обновления у всех
 
 Эта Vercel-версия не использует Socket.IO. Данные сохраняются в Supabase, а главная страница автоматически обновляет игры и чат каждые несколько секунд. Для маленького сайта друзей это проще и надежнее на бесплатном Vercel.
 
