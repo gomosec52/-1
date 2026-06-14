@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 520">
+  <defs>
+    <pattern id="screen" width="10" height="10" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#0b0b0b" opacity=".32"/>
+      <circle cx="7" cy="7" r=".85" fill="#0b0b0b" opacity=".20"/>
+    </pattern>
+    <pattern id="slash" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M-5 25 25-5M8 29 29 8" stroke="#111" stroke-width="1.4" opacity=".16"/>
+    </pattern>
+    <filter id="rough">
+      <feTurbulence baseFrequency=".025" numOctaves="2" seed="11"/>
+      <feDisplacementMap in="SourceGraphic" scale="1.4"/>
+    </filter>
+  </defs>
+  <rect width="360" height="520" fill="#f5f2eb"/>
+  <rect width="360" height="520" fill="url(#screen)"/>
+  <rect width="360" height="520" fill="url(#slash)"/>
+
+  <g filter="url(#rough)" stroke="#090909" stroke-linejoin="round">
+    <path d="M14 14h332v138H14z" fill="#fff" stroke-width="5"/>
+    <path d="M14 166h114v160H14zM142 166h204v160H142z" fill="#f7f7f7" stroke-width="5"/>
+    <path d="M14 340h332v166H14z" fill="#fff" stroke-width="5"/>
+  </g>
+
+  <g transform="translate(183 106)" stroke="#080808" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M78 18c36 35 37 101 2 138-35 38-102 40-140 2-39-39-36-104 1-140 37-36 101-36 137 0z" fill="#fff" stroke-width="5"/>
+    <path d="M-65 65c24-22 51-22 74 0M22 65c22-22 50-23 74 0" fill="none" stroke-width="6"/>
+    <path d="M-34 69c7 16 28 18 39 1M48 69c6 16 27 17 39 0" fill="#111" stroke-width="3"/>
+    <circle cx="-19" cy="64" r="4" fill="#fff"/>
+    <circle cx="63" cy="64" r="4" fill="#fff"/>
+    <path d="M-9 105c19 13 46 13 66 0" fill="none" stroke-width="4"/>
+    <path d="M-93 42c34-68 129-83 188-25M-74 23c-17-34 2-64 41-78M23 13c37-35 81-28 112 12" fill="none" stroke-width="10"/>
+    <path d="M-98 95c-42 33-66 70-79 119M108 98c39 31 66 73 78 124" fill="none" stroke-width="8"/>
+  </g>
+
+  <g transform="translate(74 356)" stroke="#090909" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M64 24c30 24 35 70 10 98-25 29-73 29-101 1-27-28-25-74 2-99 25-24 64-24 89 0z" fill="#fff" stroke-width="5"/>
+    <path d="M-32 58c14-15 32-16 47-1M23 58c15-15 34-15 50 0" fill="none" stroke-width="5"/>
+    <path d="M-8 85c15 9 34 9 49 0" fill="none" stroke-width="4"/>
+    <path d="M-50 35c23-44 85-54 123-17M-42 24c-8-24 4-47 31-58M33 20c23-22 52-18 74 9" fill="none" stroke-width="8"/>
+  </g>
+
+  <g opacity=".55" stroke="#111" fill="none">
+    <path d="M24 82h82M238 70h88M28 250h72M170 246h144M192 438h116" stroke-width="5"/>
+    <path d="M34 118c48 15 97 14 148-2M168 288c44 12 88 9 133-8M34 468c78 18 157 14 238-9" stroke-width="3"/>
+  </g>
+</svg>
